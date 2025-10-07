@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:async';
 import '../widgets/spooky_object.dart';
 import '../widgets/custom_painter.dart';
-import '../services/sound_manager.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -26,7 +25,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   final int maxTraps = 3;
   
   final Random _random = Random();
-  final SoundManager _soundManager = SoundManager();
 
   @override
   void initState() {
@@ -43,7 +41,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     _initializeObjects();
     _startObjectSpawning();
-    _soundManager.playBackgroundMusic();
   }
 
   @override
@@ -51,7 +48,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _backgroundController.dispose();
     _flickerController.dispose();
     _objectTimer.cancel();
-    _soundManager.stopAll();
     super.dispose();
   }
 
@@ -113,12 +109,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (object.type == SpookyObjectType.goldenPumpkin) {
         gameWon = true;
         score += 100;
-        _soundManager.playSuccess();
         _showWinDialog();
       } else if (object.type == SpookyObjectType.trap) {
         trapsHit++;
         score -= 20;
-        _soundManager.playTrap();
         if (trapsHit >= maxTraps) {
           gameLost = true;
           _showLoseDialog();

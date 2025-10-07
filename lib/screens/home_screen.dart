@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../services/sound_manager.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController _pumpkinController;
   late AnimationController _ghostController;
   late AnimationController _batController;
+  final SoundManager _soundManager = SoundManager();
+  bool _musicStarted = false;
 
   @override
   void initState() {
@@ -32,11 +35,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     )..repeat();
   }
 
+
   @override
   void dispose() {
     _pumpkinController.dispose();
     _ghostController.dispose();
     _batController.dispose();
+    _soundManager.stopAll();
     super.dispose();
   }
 
@@ -135,6 +140,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1))
                       .then()
                       .shimmer(duration: 3000.ms, color: Colors.white),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Start Music button
+                  if (!_musicStarted)
+                    ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          _musicStarted = true;
+                        });
+                        await _soundManager.playBackgroundMusic();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Text(
+                        '🎵 Start Spooky Music',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                        .animate(delay: 2000.ms)
+                        .fadeIn(duration: 1000.ms)
+                        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
                   
                   const SizedBox(height: 20),
                   
